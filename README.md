@@ -1,84 +1,90 @@
-# Walmart Sales Data Analysis (SQL)
+# 🛒 Walmart Sales Analysis — SQL
 
-End-to-end SQL project analyzing retail sales trends, seasonality, and
-product/store performance across a simulated 20-store, 10-department,
-2-year Walmart-style dataset (modeled on the schema of the [Kaggle
-Walmart Recruiting — Store Sales Forecasting](https://www.kaggle.com/c/walmart-recruiting-store-sales-forecasting/data)
-competition: `stores`, `features`, and weekly `sales`).
+An end-to-end SQL analytics project focused on **retail sales performance, seasonality, department trends, store efficiency, and business KPIs**.
 
-> **Note on data:** Kaggle requires an authenticated download, which
-> isn't reachable from this environment. To keep the project fully
-> runnable end-to-end, `generate_data.py` builds a synthetic dataset
-> with the identical schema and realistic sales patterns (holiday
-> spikes, seasonality, store-type effects, economic indicators). Swap
-> in the real Kaggle CSVs and the schema/queries work unchanged.
+## 🎯 Business Problem
 
-## Project Structure
-```
+Retail teams need to understand which stores and departments drive revenue, how sales change during holidays, and where operational efficiency can improve.
+
+This project uses SQL to answer those questions and turn raw sales data into business insights.
+
+> **Data note:** The project uses a synthetic dataset modeled on the schema of the Walmart Recruiting Store Sales Forecasting dataset. The included generator makes the project fully reproducible without requiring authenticated Kaggle access.
+
+## 📊 Dataset
+
+- 20 stores
+- 10 departments
+- 104 weeks of sales
+- 20,800 sales records
+- Store, department, sales, holiday, weather and economic features
+
+## 🧰 Tools & Techniques
+
+**Tools:** SQLite • SQL
+
+**SQL techniques:**
+- Joins
+- CTEs
+- Correlated subqueries
+- Window functions
+- `RANK()`
+- Moving averages
+- Conditional aggregation
+- KPI calculations
+
+## 🔍 Analysis
+
+1. Overall sales trends
+2. Monthly and year-over-year performance
+3. Holiday vs. regular-week sales
+4. Department revenue contribution
+5. Store ranking and efficiency
+6. Sales-per-square-foot analysis
+7. Economic-factor analysis
+8. Department sales concentration and volatility
+
+## 💡 Key Insights
+
+- Holiday weeks show approximately a **21% sales lift** compared with regular weeks in the analyzed dataset.
+- **Grocery contributes 23.6% of total sales**, making it the largest revenue department.
+- Type A stores generate approximately **$1,665 sales per square foot**, compared with about $1,268 for Type B and $722 for Type C.
+- The highest-performing store generates almost **7×** the sales of the lowest-performing store, highlighting a major store-type performance gap.
+- Fuel price alone does not appear to be a strong standalone driver of sales in this dataset.
+
+## 📁 Project Structure
+
+```text
 sql-sales-analysis/
-├── generate_data.py       # builds stores.csv, features.csv, sales.csv, departments.csv
-├── schema.sql              # table definitions, keys, indexes
-├── analysis_queries.sql    # 20+ business-question queries (Sections 1-7 below)
-├── walmart_sales.db        # SQLite database, pre-loaded and ready to query
-├── stores.csv / features.csv / sales.csv / departments.csv
-├── images/                 # chart exports referenced in this README
+├── generate_data.py
+├── schema.sql
+├── analysis_queries.sql
+├── walmart_sales.db
+├── stores.csv
+├── features.csv
+├── sales.csv
+├── departments.csv
+├── images/
 └── README.md
 ```
 
-## Schema
-- **stores** (Store, Type[A/B/C], Size) — 20 stores
-- **departments** (Dept, DeptName) — 10 departments (Grocery, Electronics, etc.)
-- **features** (Store, Date, Temperature, Fuel_Price, CPI, Unemployment, IsHoliday) — weekly economic/weather signals
-- **sales** (Store, Dept, Date, Weekly_Sales, IsHoliday) — 20,800 rows, 104 weeks (Feb 2023 – Jan 2025)
+## ▶️ How to Run
 
-## Key Tasks Covered (`analysis_queries.sql`)
-1. Data overview
-2. Overall sales trends (weekly/monthly totals, YoY growth via self-join, 4-week moving average with window functions)
-3. Seasonality & holiday impact (holiday vs regular week lift, per-department holiday sensitivity)
-4. Product/department performance (ranking with `RANK()`, revenue contribution %, growth comparison across periods)
-5. Store performance (top/bottom performers, sales-per-sqft efficiency, over/under-performance vs company average using correlated subqueries)
-6. Economic factor correlation (fuel price banding, resilient-market subqueries)
-7. Customer behavior proxies (department concentration via cumulative window functions, volatility via coefficient of variation)
-
-Techniques used throughout: joins, subqueries (correlated and non-correlated), CTEs, window functions (`RANK`, `SUM() OVER`, moving averages), conditional aggregation, and derived KPIs.
-
-## How to Run
 ```bash
-python3 generate_data.py          # regenerate data (optional, .db already built)
+python3 generate_data.py
 sqlite3 walmart_sales.db < schema.sql
 sqlite3 walmart_sales.db < analysis_queries.sql
 ```
 
-## Insights (from actual query output)
+## 🚀 Possible Extensions
 
-**Trends & seasonality**
+- Build a Power BI sales dashboard
+- Add store-level department rankings
+- Add cohort or seasonal analysis
+- Compare forecasted vs. actual sales
+- Add automated KPI reporting
 
-![Weekly Sales Trend](images/weekly_sales_trend.png)
+## 👤 Author
 
-- Total company sales average **$24.4K/week per store-department** in regular weeks vs **$29.5K in holiday weeks** — a **21% holiday lift** overall.
-- YoY growth is uneven month to month: **August (+34.5%)** and **May (+34.1%)** were the strongest growth months year-over-year, while **June (-14.6%)** and **September (-14.0%)** declined — pointing to a mid-year promotional/back-to-school shift worth investigating further.
+**Nikhil Vamsi** — Aspiring Data Analyst
 
-![Holiday vs Regular Week Sales](images/holiday_vs_regular.png)
-
-**Department performance**
-
-![Total Sales by Department](images/department_revenue.png)
-
-- **Grocery dominates revenue** at **23.6% of total sales** ($121.4M), more than double the next department (Electronics, 14.9%).
-- **Furniture (1.36x), Toys (1.34x), and Apparel (1.34x)** see the largest holiday-week sales lift — discretionary categories, as expected — while Grocery's lift is modest (1.16x) despite being the top revenue driver, since it's a staple category.
-- **Toys and Furniture are also the most volatile** departments (coefficient of variation ~0.50), meaning inventory/staffing plans for these categories need wider buffers than staples like Beauty or Automotive (CV ~0.48).
-
-**Store performance**
-
-![Sales Efficiency by Store Type](images/sales_per_sqft.png)
-
-- **Type A stores generate ~$1,665 in sales per sq ft**, vs **$1,268 for Type B** and just **$722 for Type C** — Type A stores are meaningfully more space-efficient, not just larger.
-- The gap between the top store (Store 11, $42.6M) and bottom store (Store 3, $6.3M) is nearly **7x**, concentrated almost entirely along the Type A vs Type C divide rather than random variation.
-
-**Economic factors**
-- Sales were actually highest in the **mid fuel-price band ($3.20–3.50)**, not the lowest — suggesting fuel price alone isn't a strong standalone driver of spend in this dataset; it likely correlates with a broader macro cycle rather than acting causally.
-
-## Suggested Next Steps
-- Add a `RANK() ... PARTITION BY Store` query to find each store's best/worst department.
-- Feed the moving-average and YoY tables into a Power BI or Tableau line chart for the visual layer (pairs well with the existing Telecom Churn Power BI dashboard).
-- Swap in the real Kaggle CSVs when available — schema and all queries run unchanged.
+[GitHub](https://github.com/nikhil-vamsi-96) • [Portfolio](https://github.com/nikhil-vamsi-96/Data-Portfolio) • [Email](mailto:nikhilvamsi96@gmail.com)
