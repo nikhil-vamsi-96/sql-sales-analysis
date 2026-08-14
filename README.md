@@ -21,6 +21,7 @@ sql-sales-analysis/
 ├── analysis_queries.sql    # 20+ business-question queries (Sections 1-7 below)
 ├── walmart_sales.db        # SQLite database, pre-loaded and ready to query
 ├── stores.csv / features.csv / sales.csv / departments.csv
+├── images/                 # chart exports referenced in this README
 └── README.md
 ```
 
@@ -51,15 +52,26 @@ sqlite3 walmart_sales.db < analysis_queries.sql
 ## Insights (from actual query output)
 
 **Trends & seasonality**
+
+![Weekly Sales Trend](images/weekly_sales_trend.png)
+
 - Total company sales average **$24.4K/week per store-department** in regular weeks vs **$29.5K in holiday weeks** — a **21% holiday lift** overall.
 - YoY growth is uneven month to month: **August (+34.5%)** and **May (+34.1%)** were the strongest growth months year-over-year, while **June (-14.6%)** and **September (-14.0%)** declined — pointing to a mid-year promotional/back-to-school shift worth investigating further.
 
+![Holiday vs Regular Week Sales](images/holiday_vs_regular.png)
+
 **Department performance**
+
+![Total Sales by Department](images/department_revenue.png)
+
 - **Grocery dominates revenue** at **23.6% of total sales** ($121.4M), more than double the next department (Electronics, 14.9%).
 - **Furniture (1.36x), Toys (1.34x), and Apparel (1.34x)** see the largest holiday-week sales lift — discretionary categories, as expected — while Grocery's lift is modest (1.16x) despite being the top revenue driver, since it's a staple category.
 - **Toys and Furniture are also the most volatile** departments (coefficient of variation ~0.50), meaning inventory/staffing plans for these categories need wider buffers than staples like Beauty or Automotive (CV ~0.48).
 
 **Store performance**
+
+![Sales Efficiency by Store Type](images/sales_per_sqft.png)
+
 - **Type A stores generate ~$1,665 in sales per sq ft**, vs **$1,268 for Type B** and just **$722 for Type C** — Type A stores are meaningfully more space-efficient, not just larger.
 - The gap between the top store (Store 11, $42.6M) and bottom store (Store 3, $6.3M) is nearly **7x**, concentrated almost entirely along the Type A vs Type C divide rather than random variation.
 
